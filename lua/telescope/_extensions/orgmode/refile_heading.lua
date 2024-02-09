@@ -8,50 +8,29 @@ local state = require("telescope.state")
 
 local utils = require("telescope-orgmode.utils")
 
-local orgmode = require("orgmode")
-local Capture = require("orgmode.capture")
-local Range = require("orgmode.files.elements.range")
-local OrgFiles = require("orgmode.files")
+local api = require("orgmode.api")
 
 return function(opts)
 	opts = opts or {}
 
-	-- TODO: this should be included in return from Files.get_current_file
-	local is_capture = vim.F.npcall(vim.api.nvim_buf_get_var, 0, "org_capture")
-
-	local src_file = OrgFiles.get_current_file()
-	-- In capture, refile top level heading even if cursor closer to a subheading
-	local src_item = is_capture and src_file:get_headlines()[1] or src_file:get_closest_headline()
-	local src_lines = src_file:get_headline_lines(src_item)
+	local closest_headline = api.current():get_closest_headline()
 
 	local function refile(prompt_bufnr)
 		local entry = action_state.get_selected_entry()
 		actions.close(prompt_bufnr)
 
-		local dst_file = entry.value.file
-		local dst_headline = entry.value.headline
-		if dst_headline then
-			-- NOTE: adapted from Capture:refile_to_headline
-			local is_same_file = dst_file.filename == src_item.root.filename
-			src_lines = Capture:_adapt_headline_level(src_item, dst_headline.level, is_same_file)
-			local refile_opts = {
-				file = dst_file.filename,
-				lines = src_lines,
-				item = src_item,
-				range = Range.from_line(dst_headline.position.end_line),
-				headline = dst_headline.title,
-			}
-			local refiled = Capture:_refile_to(refile_opts)
-			if not refiled then
-				return false
-			end
-		else
-			Capture:_refile_to_end(dst_file.filename, src_lines, src_item)
+		-- Refile to the file by default
+		local destination = entry.value.file
+
+		-- Refile to a specific heading if is set
+		if entry.value.headline then
+			destination = entry.value.headline
 		end
 
-		if is_capture then
-			orgmode.action("capture.kill")
-		end
+		return api.refile({
+			source = closest_headline,
+			destination = destination,
+		})
 	end
 
 	local function gen_depth_toggle(opts, prompt_bufnr)
