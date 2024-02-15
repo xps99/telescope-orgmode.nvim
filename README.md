@@ -13,7 +13,27 @@ Refile heading from capture or current file under destination with `:Telescope o
 
 [![asciicast](https://asciinema.org/a/1X4oG6s5jQZrJJI3DfEzJU3wN.svg)](https://asciinema.org/a/1X4oG6s5jQZrJJI3DfEzJU3wN)
 
-## Setup
+## Installation
+### With lazyvim
+
+```lua 
+  {
+    "lyz-code/telescope-orgmode.nvim",
+    event = "VeryLazy",
+    dependencies = {
+      "nvim-orgmode/orgmode",
+      "nvim-telescope/telescope.nvim",
+    },
+    config = function()
+      require("telescope").load_extension("orgmode")
+
+      vim.keymap.set("n", "<leader>r", require("telescope").extensions.orgmode.refile_heading)
+      vim.keymap.set("n", "<leader>fh", require("telescope").extensions.orgmode.search_headings)
+    end,
+  }
+```
+
+### Without lazyvim
 
 You can setup the extension by doing:
 
