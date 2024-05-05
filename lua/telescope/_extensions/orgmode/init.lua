@@ -7,5 +7,6 @@ return require('telescope').register_extension({
     search_headings = require('telescope._extensions.orgmode.search_headings'),
     search_headings_in_current_file = require('telescope._extensions.orgmode.search_headings_in_current_file'),
     refile_heading = require('telescope._extensions.orgmode.refile_heading'),
+    refile_heading_in_current_file = require('telescope._extensions.orgmode.refile_heading_in_current_file'),
   },
 })
