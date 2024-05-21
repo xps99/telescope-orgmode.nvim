@@ -6,5 +6,6 @@ return require('telescope').register_extension({
   exports = {
     search_headings = require('telescope-orgmode').search_headings,
     refile_heading = require('telescope-orgmode').refile_heading,
+    insert_link = require('telescope-orgmode').insert_link,
   },
 })
