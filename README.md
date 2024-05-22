@@ -29,6 +29,7 @@ Refile heading from capture or current file under destination with `:Telescope o
 
       vim.keymap.set("n", "<leader>r", require("telescope").extensions.orgmode.refile_heading)
       vim.keymap.set("n", "<leader>fh", require("telescope").extensions.orgmode.search_headings)
+      vim.keymap.set("n", "<leader>li", require("telescope").extensions.orgmode.insert_link)
     end,
   }
 ```
@@ -58,6 +59,7 @@ vim.api.nvim_create_autocmd('FileType', {
 ```viml
 :Telescope orgmode search_headings
 :Telescope orgmode refile_heading
+:Telescope orgmode insert_link
 ```
 
 ## Available functions
@@ -65,4 +67,5 @@ vim.api.nvim_create_autocmd('FileType', {
 ```lua
 require('telescope').extensions.orgmode.search_headings
 require('telescope').extensions.orgmode.refile_heading
+require('telescope').extensions.orgmode.insert_link
 ```
