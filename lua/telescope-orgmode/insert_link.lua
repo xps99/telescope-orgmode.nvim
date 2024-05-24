@@ -18,6 +18,7 @@ local utils = require('telescope-orgmode.utils')
 ---@field display function
 ---@field location string,
 ---@field line string,
+---@field tags string,
 
 local function insert(prompt_bufnr)
   actions.close(prompt_bufnr)

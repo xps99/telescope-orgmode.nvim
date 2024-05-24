@@ -61,11 +61,13 @@ utils.make_entry = function(opts)
     items = {
       { width = vim.F.if_nil(opts.location_width, 20) },
       { remaining = true },
+      --{ width = vim.F.if_nil(opts.tag_width, 20) },
     },
   })
 
+  ---@param entry MatchEntry
   local function make_display(entry)
-    return displayer({ entry.location, entry.line })
+    return displayer({ entry.location, entry.tags .. ' ' .. entry.line })
   end
 
   return function(entry)
@@ -74,21 +76,24 @@ utils.make_entry = function(opts)
     local lnum = nil
     local location = vim.fn.fnamemodify(entry.filename, ':t')
     local line = ''
+    local tags = ''
 
     if headline then
       lnum = headline.position.start_line
       location = string.format('%s:%i', location, lnum)
       line = string.format('%s %s', string.rep('*', headline.level), headline.title)
+      tags = table.concat(headline.all_tags, ':')
     end
 
     return {
       value = entry,
-      ordinal = location .. ' ' .. line,
+      ordinal = location .. ' ' .. tags .. ' ' .. line,
       filename = entry.filename,
       lnum = lnum,
       display = make_display,
       location = location,
       line = line,
+      tags = tags,
     }
   end
 end
