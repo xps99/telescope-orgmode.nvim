@@ -16,9 +16,9 @@ Refile heading from capture or current file under destination with `:Telescope o
 ## Installation
 ### With lazyvim
 
-```lua 
+```lua
   {
-    "lyz-code/telescope-orgmode.nvim",
+    "nvim-orgmode/telescope-orgmode.nvim",
     event = "VeryLazy",
     dependencies = {
       "nvim-orgmode/orgmode",
