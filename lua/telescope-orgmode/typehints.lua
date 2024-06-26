@@ -1,3 +1,13 @@
+---@class MatchEntry
+---@field value OrgHeadlineEntry | OrgFileEntry
+---@field ordinal string
+---@field filename string
+---@field lnum number
+---@field display function
+---@field location string,
+---@field line string,
+---@field tags string,
+
 -- Type-hints copied from nvim-orgmode to simplify development
 
 ---@class OrgFileMetadata
