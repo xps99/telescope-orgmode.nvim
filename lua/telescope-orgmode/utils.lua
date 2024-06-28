@@ -124,8 +124,8 @@ utils.make_entry = function(opts)
       lnum = headline.position.start_line
       location = string.format('%s:%i', location, lnum)
       line = string.format('%s %s', string.rep('*', headline.level), headline.title)
-      ordinal = tags .. ' ' .. line .. ' ' .. location
       tags = table.concat(headline.all_tags, ':')
+      ordinal = tags .. ' ' .. line .. ' ' .. location
     end
 
     return {
