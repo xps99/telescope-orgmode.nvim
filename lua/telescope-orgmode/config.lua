@@ -15,6 +15,7 @@ function M.init_opts(opts, prompt_titles)
   for state, _ in pairs(prompt_titles) do
     table.insert(opts.states, state)
   end
+  opts.state = { current = opts.states[1], next = opts.states[2] }
   return opts
 end
 

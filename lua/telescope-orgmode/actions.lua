@@ -3,38 +3,20 @@ local org = require('telescope-orgmode.org')
 
 local actions = require('telescope.actions')
 local action_state = require('telescope.actions.state')
-local state = require('telescope.state')
 
 local M = {}
 
 function M.toggle_headlines_orgfiles(opts)
   return function(prompt_bufnr)
-    local status = state.get_status(prompt_bufnr)
+    opts.state.current, opts.state.next = opts.state.next, opts.state.current
 
-    -- _ot_ is used as our plugin-specific namespace in the action status
-    -- (ot - orgmode telescope)
-    --
-    -- FIXME: the state get's sometimes nil when the initalization has already been run
-    -- In this case, a toggle is "dropped" (keypress does not change the state).
-    -- Can we avoid that by initializing the state in the higher order function?
-    -- Idea: We can try to do it as before, but pass the prompt_bufnr with the opts.
-    if status._ot_state == nil then
-      -- uninitialized state - initialize with orgfiles
-      -- Because when this function is called the first time, it is triggered
-      -- by the users and we search over headlines by default, we set the state
-      -- for the first toggle already here.
-      status._ot_state = { current = opts.states[2], next = opts.states[1] }
-    else
-      status._ot_state.current, status._ot_state.next = status._ot_state.next, status._ot_state.current
-    end
-
-    if status._ot_state.current == 'headlines' then
+    if opts.state.current == 'headlines' then
       M._find_headlines(opts, prompt_bufnr)
-    elseif status._ot_state.current == 'orgfiles' then
+    elseif opts.state.current == 'orgfiles' then
       M._find_orgfiles(opts, prompt_bufnr)
     else
       -- this should not happen
-      error(string.format('Invalid state %s', status._ot_state.current))
+      error(string.format('Invalid state %s', opts.state.current))
     end
   end
 end

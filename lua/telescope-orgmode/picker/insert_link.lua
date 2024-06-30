@@ -15,7 +15,7 @@ return function(opts)
 
   pickers
     .new(opts, {
-      prompt_title = opts.prompt_titles[opts.states[1]],
+      prompt_title = opts.prompt_titles[opts.state.current],
       finder = finders.headlines(opts),
       sorter = conf.generic_sorter(opts),
       previewer = conf.grep_previewer(opts),
