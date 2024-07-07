@@ -1,7 +1,3 @@
-require('telescope-orgmode.typehints')
-
-local OrgApiHeadline = require('orgmode.api.headline')
-local OrgApiFile = require('orgmode.api.file')
 local OrgApi = require('orgmode.api')
 
 local M = {}
@@ -9,7 +5,7 @@ local M = {}
 function M.load_files(opts)
   ---@type { file: OrgApiFile, filename: string, last_used: number }[]
   local file_results = vim.tbl_map(function(file)
-    local file_stat = vim.loop.fs_stat(file.filename) or 0
+    local file_stat = vim.uv.fs_stat(file.filename) or 0
     return { file = file, filename = file.filename, last_used = file_stat.mtime.sec }
   end, OrgApi.load())
 
