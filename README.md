@@ -15,6 +15,7 @@ Refile heading from capture or current file under destination with `:Telescope o
 [![asciicast](https://asciinema.org/a/1X4oG6s5jQZrJJI3DfEzJU3wN.svg)](https://asciinema.org/a/1X4oG6s5jQZrJJI3DfEzJU3wN)
 
 ## Installation
+
 ### With lazyvim
 
 ```lua
@@ -80,7 +81,7 @@ Every mode is available in every function.
 
 This is the first and default mode. It shows all the headlines, initially
 sorted by most recently changed org file. The level of headlines can be
-[configured](#Configuration).
+[configured](#configuration).
 
 ### Search org files
 
@@ -113,4 +114,17 @@ For a particular command you can pass it directly in your key mapping to the fun
 
 ```lua
 require('telescope').extension.orgmode.search_headings({ max_depth = 3 })
+```
+
+You can also create a key mapping, that allows you to search directly for org files:
+
+```lua
+vim.set.keymap(
+  "n",
+  "<Leader>off", 
+  function()
+    require('telescope').extension.orgmode.search_headings({ mode = "orgfiles" })
+  end,
+  { desc = "Find org files"}
+)
 ```
