@@ -46,10 +46,24 @@ function M.refile(closest_headline)
       destination = entry.value.headline
     end
 
-    return org.refile({
-      source = closest_headline,
-      destination = destination,
-    })
+    destination = org.refile({ source = closest_headline, destination = destination })
+
+    -- Warte auf die Promise-Auflösung mit :next()
+    return destination:next(function(resolved_value)
+      -- Dieser Block wird erst nach der Auflösung ausgeführt
+      if entry.value.headline then
+        local filename = entry.value.headline.file.filename
+        local line = entry.value.headline.position.end_line
+        vim.cmd('edit ' .. filename)
+        vim.api.nvim_win_set_cursor(0, { line, 0 })
+      else
+        local filename = entry.filename
+        vim.cmd('edit ' .. filename)
+      end
+
+      -- Gib den Wert für weiteres Chaining zurück
+      return resolved_value
+    end)
   end
 end
 
@@ -87,7 +101,7 @@ end
 function M._update_picker(finder, title, prompt_bufnr)
   local current_picker = action_state.get_current_picker(prompt_bufnr)
 
-  current_picker.layout.prompt.border:change_title(title)
+  -- current_picker.layout.prompt.border:change_title(title)
   current_picker:refresh(finder)
 end
 
