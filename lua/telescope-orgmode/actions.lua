@@ -55,11 +55,14 @@ function M.refile(closest_headline)
         local filename = entry.value.headline.file.filename
         local line = entry.value.headline.position.end_line
         vim.cmd('edit ' .. filename)
-        vim.api.nvim_win_set_cursor(0, { line, 0 })
+        vim.api.nvim_win_set_cursor(0, { line + 1, 0 })
       else
         local filename = entry.filename
         vim.cmd('edit ' .. filename)
       end
+      vim.cmd('normal! zx')
+      -- vim.cmd('normal! ]]')
+      -- vim.cmd('normal! zx')
 
       -- Gib den Wert für weiteres Chaining zurück
       return resolved_value
