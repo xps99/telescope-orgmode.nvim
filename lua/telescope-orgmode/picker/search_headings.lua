@@ -7,6 +7,9 @@ local action_state = require('telescope.actions.state')
 local state = require('telescope.state')
 local logger = require('telescope-orgmode.logger')
 
+local action_set = require('telescope.actions.set') -- <--- ADD THIS
+local actions = require('telescope.actions') -- <--- AND THIS
+
 return function(opts)
   opts = config.init_opts(opts, {
     headlines = 'Search headlines',
@@ -97,6 +100,16 @@ return function(opts)
 
         map('i', '<C-y>', drill_down)
         map('i', '<C-h>', drill_up)
+        -- Override the default select action to add fold reordering
+        action_set.select:enhance({
+          post = function()
+            -- Run zx after jumping to the selected entry
+            vim.schedule(function()
+              vim.cmd('normal! zx')
+            end)
+          end,
+        })
+
         mappings.attach_mappings(map, opts)
         return true
       end,
