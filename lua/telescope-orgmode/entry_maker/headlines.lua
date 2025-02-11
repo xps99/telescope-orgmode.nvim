@@ -46,7 +46,8 @@ M.make_entry = function(opts)
 
   ---@param entry MatchEntry
   local function make_display(entry)
-    return displayer({ entry.location, entry.tags .. ' ' .. entry.line })
+    return displayer({ entry.location, entry.line })
+    -- return displayer({ entry.location, entry.tags .. ' ' .. entry.line })
   end
 
   return function(entry)
