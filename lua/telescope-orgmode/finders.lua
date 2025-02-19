@@ -6,8 +6,11 @@ local finders = require('telescope.finders')
 local M = {}
 
 function M.headlines(opts)
+  -- This should call utils.get_entries indirectly via headlines.get_entries
+  local entries = headlines.get_entries(opts)
+  vim.notify('finders.headlines: retrieved ' .. tostring(#entries) .. ' entries', vim.log.levels.DEBUG)
   return finders.new_table({
-    results = headlines.get_entries(opts),
+    results = entries,
     entry_maker = opts.entry_maker or headlines.make_entry(opts),
   })
 end
@@ -26,7 +29,6 @@ function M.from_options(opts)
   elseif opts.state.current == 'orgfiles' then
     return M.orgfiles(opts)
   else
-    -- this should not happen
     error(string.format('Invalid state %s', opts.state.current))
   end
 end
