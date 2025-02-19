@@ -5,6 +5,7 @@ local config = require('telescope-orgmode.config')
 local mappings = require('telescope-orgmode.mappings')
 local action_state = require('telescope.actions.state')
 local state = require('telescope.state')
+local logger = require('telescope-orgmode.logger')
 
 return function(opts)
   opts = config.init_opts(opts, {
@@ -12,7 +13,7 @@ return function(opts)
     orgfiles = 'Search org files',
   }, 'headlines')
 
-  vim.notify('search_headings picker starting with opts: ' .. vim.inspect(opts or {}), vim.log.levels.DEBUG)
+  logger.notify('search_headings picker starting with opts: ' .. vim.inspect(opts or {}), vim.log.levels.DEBUG)
 
   pickers
     .new(opts, {
@@ -27,7 +28,7 @@ return function(opts)
         local function increase_depth()
           status.current_depth = (status.current_depth or 0) + 1
           opts.max_depth = status.current_depth
-          vim.notify('Increasing depth to: ' .. tostring(opts.max_depth), vim.log.levels.DEBUG)
+          logger.notify('Increasing depth to: ' .. tostring(opts.max_depth), vim.log.levels.DEBUG)
           local new_finder = finders.from_options(opts)
           action_state.get_current_picker(prompt_bufnr):refresh(new_finder, opts)
         end
@@ -36,11 +37,11 @@ return function(opts)
           if status.current_depth and status.current_depth > 1 then
             status.current_depth = status.current_depth - 1
             opts.max_depth = status.current_depth
-            vim.notify('Decreasing depth to: ' .. tostring(opts.max_depth), vim.log.levels.DEBUG)
+            logger.notify('Decreasing depth to: ' .. tostring(opts.max_depth), vim.log.levels.DEBUG)
             local new_finder = finders.from_options(opts)
             action_state.get_current_picker(prompt_bufnr):refresh(new_finder, opts)
           else
-            vim.notify('Minimum depth reached', vim.log.levels.DEBUG)
+            logger.notify('Minimum depth reached', vim.log.levels.DEBUG)
           end
         end
 
@@ -50,10 +51,16 @@ return function(opts)
         local function drill_down()
           local entry = action_state.get_selected_entry()
           if not entry or not entry.value.headline then
-            vim.notify('Drill-down aborted: No entry or headline found', vim.log.levels.WARN)
+            logger.notify('Drill-down aborted: No entry or headline found', vim.log.levels.WARN)
             return
           end
-          vim.notify('Drill-down triggered on headline: ' .. vim.inspect(entry.value.headline), vim.log.levels.DEBUG)
+          logger.notify('Drill-down triggered on headline: ' .. vim.inspect(entry.value.headline), vim.log.levels.DEBUG)
+          if not opts.parent_stack then
+            opts.parent_stack = {}
+          end
+          if opts.parent_headline then
+            table.insert(opts.parent_stack, { headline = opts.parent_headline, filename = opts.parent_headline_file })
+          end
           opts.parent_headline = entry.value.headline
           opts.parent_headline_file = entry.value.filename
           local new_finder = finders.from_options(opts)
@@ -61,11 +68,35 @@ return function(opts)
           picker:refresh(new_finder, opts)
           vim.schedule(function()
             picker:set_selection(1)
-            vim.notify('Selection reset to first entry after drill-down', vim.log.levels.DEBUG)
+            logger.notify('Selection reset to first entry after drill-down', vim.log.levels.DEBUG)
+          end)
+        end
+
+        local function drill_up()
+          if opts.parent_stack and #opts.parent_stack > 0 then
+            local parent = table.remove(opts.parent_stack)
+            opts.parent_headline = parent.headline
+            opts.parent_headline_file = parent.filename
+            logger.notify(
+              'Drill-up: returned to parent headline: ' .. vim.inspect(parent.headline),
+              vim.log.levels.DEBUG
+            )
+          else
+            opts.parent_headline = nil
+            opts.parent_headline_file = nil
+            logger.notify('Drill-up: cleared drilldown, returned to top-level', vim.log.levels.DEBUG)
+          end
+          local new_finder = finders.from_options(opts)
+          local picker = action_state.get_current_picker(prompt_bufnr)
+          picker:refresh(new_finder, opts)
+          vim.schedule(function()
+            picker:set_selection(1)
+            logger.notify('Selection reset to first entry after drill-up', vim.log.levels.DEBUG)
           end)
         end
 
         map('i', '<C-y>', drill_down)
+        map('i', '<C-h>', drill_up)
         mappings.attach_mappings(map, opts)
         return true
       end,

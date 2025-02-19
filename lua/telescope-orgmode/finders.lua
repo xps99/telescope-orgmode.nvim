@@ -1,5 +1,6 @@
 local headlines = require('telescope-orgmode.entry_maker.headlines')
 local orgfiles = require('telescope-orgmode.entry_maker.orgfiles')
+local logger = require('telescope-orgmode.logger')
 
 local finders = require('telescope.finders')
 
@@ -8,7 +9,7 @@ local M = {}
 function M.headlines(opts)
   -- This should call utils.get_entries indirectly via headlines.get_entries
   local entries = headlines.get_entries(opts)
-  vim.notify('finders.headlines: retrieved ' .. tostring(#entries) .. ' entries', vim.log.levels.DEBUG)
+  logger.notify('finders.headlines: retrieved ' .. tostring(#entries) .. ' entries', vim.log.levels.DEBUG)
   return finders.new_table({
     results = entries,
     entry_maker = opts.entry_maker or headlines.make_entry(opts),

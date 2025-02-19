@@ -1,5 +1,6 @@
 local org = require('telescope-orgmode.org')
 local entry_display = require('telescope.pickers.entry_display')
+local logger = require('telescope-orgmode.logger')
 
 -- Updated index_headlines method that uses debug messages and robust parent matching.
 local function index_headlines(file_results, opts)
@@ -8,7 +9,7 @@ local function index_headlines(file_results, opts)
     local parent = opts.parent_headline
     local parent_level = parent.level
     local parent_filename = opts.parent_headline_file or ''
-    vim.notify(
+    logger.notify(
       'index_headlines: Drill-down active. Parent: '
         .. parent.title
         .. ' (level '
@@ -32,13 +33,13 @@ local function index_headlines(file_results, opts)
               and headline.title == parent.title
             then
               found_parent = true
-              vim.notify('index_headlines: Found parent headline at index ' .. i, vim.log.levels.DEBUG)
+              logger.notify('index_headlines: Found parent headline at index ' .. i, vim.log.levels.DEBUG)
             end
           else
             -- Once the parent is found, add subsequent headlines until a headline
             -- with level less than or equal to the parent's level is encountered.
             if headline.level <= parent_level then
-              vim.notify(
+              logger.notify(
                 "index_headlines: Stopped at headline '" .. headline.title .. "' (level " .. headline.level .. ')',
                 vim.log.levels.DEBUG
               )
@@ -47,12 +48,12 @@ local function index_headlines(file_results, opts)
             if opts.max_depth then
               if headline.level <= parent_level + opts.max_depth then
                 table.insert(results, { file = file_entry.file, filename = file_entry.filename, headline = headline })
-                vim.notify(
+                logger.notify(
                   "index_headlines: Adding headline '" .. headline.title .. "' (level " .. headline.level .. ')',
                   vim.log.levels.DEBUG
                 )
               else
-                vim.notify(
+                logger.notify(
                   "index_headlines: Skipping headline '"
                     .. headline.title
                     .. "' (level "
@@ -65,7 +66,7 @@ local function index_headlines(file_results, opts)
               end
             else
               table.insert(results, { file = file_entry.file, filename = file_entry.filename, headline = headline })
-              vim.notify(
+              logger.notify(
                 "index_headlines: Adding headline '" .. headline.title .. "' (level " .. headline.level .. ')',
                 vim.log.levels.DEBUG
               )
@@ -74,19 +75,19 @@ local function index_headlines(file_results, opts)
         end
 
         if not found_parent then
-          vim.notify('index_headlines: Parent headline not found in file ' .. parent_filename, vim.log.levels.WARN)
+          logger.notify('index_headlines: Parent headline not found in file ' .. parent_filename, vim.log.levels.WARN)
         end
       end
     end
 
     if #results == 0 then
-      vim.notify(
+      logger.notify(
         "index_headlines: No child headlines found under parent '" .. parent.title .. "'",
         vim.log.levels.DEBUG
       )
     end
   else
-    vim.notify(
+    logger.notify(
       'index_headlines: No parent_headline provided; indexing all headlines up to max_depth: '
         .. tostring(opts.max_depth),
       vim.log.levels.DEBUG
@@ -101,7 +102,7 @@ local function index_headlines(file_results, opts)
       end
     end
   end
-  vim.notify('index_headlines: Final results count: ' .. tostring(#results), vim.log.levels.DEBUG)
+  logger.notify('index_headlines: Final results count: ' .. tostring(#results), vim.log.levels.DEBUG)
   return results
 end
 
@@ -109,7 +110,7 @@ local M = {}
 
 M.get_entries = function(opts)
   local file_results = org.load_files(opts)
-  vim.notify('headlines.get_entries: Loaded ' .. tostring(#file_results) .. ' file(s)', vim.log.levels.DEBUG)
+  logger.notify('headlines.get_entries: Loaded ' .. tostring(#file_results) .. ' file(s)', vim.log.levels.DEBUG)
   return index_headlines(file_results, opts)
 end
 
