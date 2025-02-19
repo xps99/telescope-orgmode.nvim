@@ -70,6 +70,7 @@ return function(opts)
             picker:set_selection(1)
             logger.notify('Selection reset to first entry after drill-down', vim.log.levels.DEBUG)
           end)
+          picker:reset_prompt('')
         end
 
         local function drill_up()
@@ -93,6 +94,7 @@ return function(opts)
             picker:set_selection(1)
             logger.notify('Selection reset to first entry after drill-up', vim.log.levels.DEBUG)
           end)
+          picker:reset_prompt('')
         end
 
         map('i', '<C-y>', drill_down)
