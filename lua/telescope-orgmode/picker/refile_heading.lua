@@ -18,28 +18,6 @@ return function(opts)
 
   local closest_headline = org.get_closest_headline()
 
-  -- local function increase_depth(prompt_bufnr)
-  --   local current_picker = action_state.get_current_picker(prompt_bufnr)
-  --   local status = state.get_status(prompt_bufnr)
-  --   status._ot_current_depth = status._ot_current_depth or opts.max_depth or 1
-  --   status._ot_current_depth = status._ot_current_depth + 1
-  --   opts.max_depth = status._ot_current_depth
-  --
-  --   local new_finder = finders.from_options(opts)
-  --   current_picker:refresh(new_finder, opts)
-  -- end
-  --
-  -- local function decrease_depth(prompt_bufnr)
-  --   local current_picker = action_state.get_current_picker(prompt_bufnr)
-  --   local status = state.get_status(prompt_bufnr)
-  --   status._ot_current_depth = status._ot_current_depth or opts.max_depth or 1
-  --   status._ot_current_depth = math.max(1, status._ot_current_depth - 1)
-  --   opts.max_depth = status._ot_current_depth
-  --
-  --   local new_finder = finders.from_options(opts)
-  --   current_picker:refresh(new_finder, opts)
-  -- end
-
   pickers
     .new(opts, {
       prompt_title = opts.prompt_titles[opts.state.current],
